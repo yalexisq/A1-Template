@@ -1,3 +1,5 @@
+//Alexis Quilatan, 400507554, 2AA4
+
 package ca.mcmaster.se2aa4.mazerunner;
 
 import java.io.IOException;

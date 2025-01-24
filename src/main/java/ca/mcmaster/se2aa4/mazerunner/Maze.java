@@ -1,3 +1,5 @@
+//Alexis Quilatan, 400507554, 2AA4
+
 package ca.mcmaster.se2aa4.mazerunner;
 
 import java.io.BufferedReader;
@@ -23,6 +25,7 @@ public class Maze {
         return grid[row][col] == ' ';
     }
 
+    //Finds entry
     public int[] findEntry() {
         for (int row = 0; row < grid.length; row++) {
             if (grid[row][0] == ' ') return new int[]{row, 0}; //Entry on left

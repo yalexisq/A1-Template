@@ -1,5 +1,4 @@
 //Alexis Quilatan, 400507554, 2AA4
-
 package ca.mcmaster.se2aa4.mazerunner;
 
 import java.io.IOException;
@@ -13,17 +12,14 @@ public class Main {
     public static void main(String[] args) {
         logger.info("Maze Runner started");
 
-        //Set up cmd-line options
         Options options = new Options();
         options.addOption("i", "input", true, "Specify the maze input file");
+        options.addOption("p", "path", true, "Verify a given path for the maze");
 
         CommandLineParser parser = new DefaultParser();
-        
-        CommandLine cmd;
 
         try {
-            //Parses cmd-line arguments
-            cmd = parser.parse(options, args);
+            CommandLine cmd = parser.parse(options, args);
 
             if (!cmd.hasOption("i")) {
                 logger.error("Input file not specified. Use the -i flag to provide the file path");
@@ -33,24 +29,20 @@ public class Main {
             String inputFile = cmd.getOptionValue("i");
             logger.info("Reading maze from file: {}", inputFile);
 
-            //Initializes maze
             Maze maze = new Maze(inputFile);
 
-            //Prints maze visualization
-            logger.info("Maze visualization:");
-            char[][] grid = maze.getGrid();
-            for (char[] row : grid) {
-                StringBuilder rowOutput = new StringBuilder();
-                for (char c : row) {
-                    rowOutput.append(c == '#' ? "WALL " : "PASS ");
-                }
-                logger.info(rowOutput.toString());
+            if (cmd.hasOption("p")) {
+                String inputPath = cmd.getOptionValue("p").replaceAll("\\s+", "");
+                boolean isValid = PathManager.verifyPath(maze, inputPath);
+                System.out.println(isValid ? "correct path" : "incorrect path");
+                return;
             }
 
-            //Finds path using player
             Player player = new Player();
-            String canonicalPath = player.computePath(maze);
-            logger.info("Canonical Path: {}", canonicalPath);
+            String rawPath = player.computePath(maze);
+            String factorizedPath = PathManager.factorizePath(rawPath);
+            System.out.println(factorizedPath);
+
         } catch (ParseException e) {
             logger.error("Error parsing command-line arguments: {}", e.getMessage());
         } catch (IOException e) {

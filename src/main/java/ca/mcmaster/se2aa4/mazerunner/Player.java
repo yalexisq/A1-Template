@@ -5,81 +5,52 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Player {
-    private static final Logger logger = LogManager.getLogger();
-    private int directionIndex; // 0: UP, 1: RIGHT, 2: DOWN, 3: LEFT
-    private final int[][] directions = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-
-    public Player() {
-        directionIndex = 1; //Start facing right
+    private static final Logger logger = LogManager.getLogger(Player.class);
+    private int row;
+    private int col;
+    private Direction facing;
+    
+    public Player(int[] startPos, Direction initial) {
+        this.row = startPos[0];
+        this.col = startPos[1];
+        this.facing = initial;
     }
-
-    public String computePath(Maze maze) {
-        StringBuilder path = new StringBuilder();
-        int[] position = maze.findEntry();
-
-        if (position == null) {
-            logger.error("No entry point found");
-            return "";
+    
+    //Makes moves to traverse maze
+    public void executeMove(char move, Maze maze) {
+        move = Character.toUpperCase(move);
+        switch (move) {
+            case 'F':
+                attemptForward(maze);
+                break;
+            case 'L':
+                facing = facing.turnLeft();
+                break;
+            case 'R':
+                facing = facing.turnRight();
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown move command: " + move);
         }
-
-        position = move(position);
-        path.append("F");
-
-        int rows = maze.getGrid().length;
-        int cols = maze.getGrid()[0].length;
-
-        while (true) {
-            if (isExit(maze, position, cols) && !maze.isEntry(position)) break;
-
-            turnRight();
-            int[] nextPos = move(position);
-            if (isValidMove(maze, nextPos, rows, cols)) {
-                path.append("RF");
-                position = nextPos;
-                continue;
-            }
-
-            turnLeft();
-            nextPos = move(position);
-            if (isValidMove(maze, nextPos, rows, cols)) {
-                path.append("F");
-                position = nextPos;
-                continue;
-            }
-
-            turnLeft();
-            nextPos = move(position);
-            if (isValidMove(maze, nextPos, rows, cols)) {
-                path.append("LF");
-                position = nextPos;
-                continue;
-            }
-
-            turnLeft();
+    }
+    
+    private void attemptForward(Maze maze) {
+        int newRow = row + facing.getDeltaRow();
+        int newCol = col + facing.getDeltaCol();
+        if (maze.isOpen(newRow, newCol)) {
+            row = newRow;
+            col = newCol;
+            logger.debug("Moved forward");
+        } else {
+            logger.debug("Current coordinate causing block. Cannot move forward");
         }
-
-        return path.toString().trim();
     }
-
-    private boolean isValidMove(Maze maze, int[] position, int rows, int cols) {
-        int row = position[0], col = position[1];
-        return row >= 0 && row < rows && col >= 0 && col < cols && maze.isPassage(row, col);
+    
+    public int[] getCurrentPosition() {
+        return new int[] { row, col };
     }
-
-    private boolean isExit(Maze maze, int[] position, int cols) {
-        int row = position[0], col = position[1];
-        return (col == 0 || col == cols - 1) && maze.isPassage(row, col);
-    }
-
-    private void turnRight() {
-        directionIndex = (directionIndex + 1) % 4;
-    }
-
-    private void turnLeft() {
-        directionIndex = (directionIndex + 3) % 4; //Equal to -1 mod 4
-    }
-
-    private int[] move(int[] position) {
-        return new int[]{position[0] + directions[directionIndex][0], position[1] + directions[directionIndex][1]};
+    
+    public Direction getFacing() {
+        return facing;
     }
 }

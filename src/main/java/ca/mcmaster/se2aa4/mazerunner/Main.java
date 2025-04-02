@@ -1,13 +1,16 @@
 //Alexis Quilatan, 400507554, 2AA4
 package ca.mcmaster.se2aa4.mazerunner;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Main {
     private static final Logger logger = LogManager.getLogger(Main.class);
-
     public static void main(String[] args) {
         Options options = new Options();
         options.addOption(Option.builder("i")
@@ -28,16 +31,16 @@ public class Main {
             String inputmazeFile = cmd.getOptionValue("i");
             String moveSeq = cmd.getOptionValue("p");
 
-            // Loads maze from file
+            //Loads maze from file
             Maze maze = new Maze(inputmazeFile);
             PathManager pathMgr = new PathManager();
-            // logger.info("** Starting Maze Runner");
+            //logger.info("** Starting Maze Runner");
 
-            // Verifies any provided paths 
+            //Verifies any provided paths 
             if (moveSeq != null) {
-                // logger.info("***Verifying provided path");
+                //logger.info("***Verifying provided path");
                 String canonicalMoves = pathMgr.toCanonical(moveSeq);
-                // Tries verifying using both possible starting orientations
+                //Tries verifying using both possible starting orientations
                 String resultE = verifyPath(maze, 'E', canonicalMoves);
                 String resultW = verifyPath(maze, 'W', canonicalMoves);
                 System.out.println(resultE.equalsIgnoreCase("correct path") 
@@ -46,20 +49,20 @@ public class Main {
             } 
             
             else {
-                // No move sequence provided so solve the maze using our algorithm.
+                //No move sequence provided so solve the maze using our algorithm.
                 maze.setEntrySide('E');
                 Player player = new Player(maze.getEntry(), Direction.fromChar('E'));
                 MazePathSolver solver = new MazePathSolver(maze, player, new RightHandSolver());
-                // logger.info("**** Computing path");
+                //logger.info("**** Computing path");
                 solver.computeSolution();
                 String rawPath = solver.getSolution();
                 pathMgr.setCanonicalPath(rawPath);
                 System.out.println(pathMgr.toFactorized());
             }
 
-            // logger.info("** End of MazeRunner");
+            //logger.info("** End of MazeRunner");
         } catch (Exception e) {
-            // logger.error("/!\ An error has occured /!\", e);
+            //logger.error("/!\ An error has occured /!\", e);
             System.err.println("Error: " + e.getMessage());
         }
     }
@@ -77,8 +80,8 @@ public class Main {
         }
         int[] pos = tester.getCurrentPosition();
         int[] exitPos = maze.getExit();
-        // logger.info("Final position: [{}, {}], Exit: [{}, {}]", pos[0], pos[1], exitPos[0], exitPos[1]);
+        //logger.info("Final position: [{}, {}], Exit: [{}, {}]", pos[0], pos[1], exitPos[0], exitPos[1]);
         return (pos[0] == exitPos[0] && pos[1] == exitPos[1]) ? "correct path" : "incorrect path";
     }
-    // logger.info("Maze Runner ended");
+    //logger.info("Maze Runner ended");
 }

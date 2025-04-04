@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -69,23 +70,25 @@ public class Maze {
     }
     
     public void setEntrySide(char side) {
-        int[] left = new int[2];
-        int[] right = new int[2];
-        // Scan through rows to find openings on maze edges
+        int[] left = null;
+        int[] right = null;
+    
+        //Scan through rows to find openings on maze edges
         for (int i = 0; i < rows; i++) {
-            if (grid[i][0] == ' ') {
-                left[0] = i; left[1] = 0;
+            if (grid[i][0] == ' ' && left == null) { //First open space on the left edge
+                left = new int[]{i, 0};
             }
-            if (grid[i][cols - 1] == ' ') {
-                right[0] = i; right[1] = cols - 1;
+            if (grid[i][cols - 1] == ' ') { //Last open space on the right edge
+                right = new int[]{i, cols - 1};
             }
         }
+        //Set entry and exit based on the specified side
         if (Character.toUpperCase(side) == 'E') {
-            entry = left;
-            exit = right;
+            entry = left; //Entry on the left edge
+            exit = right; //Exit on the right edge
         } else if (Character.toUpperCase(side) == 'W') {
-            entry = right;
-            exit = left;
+            entry = right; //Entry on the right edge
+            exit = left; //Exit on the left edge
         } else {
             throw new IllegalArgumentException("Unknown entry side on " + side);
         }

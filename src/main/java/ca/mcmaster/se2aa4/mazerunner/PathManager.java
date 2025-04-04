@@ -27,9 +27,13 @@ public class PathManager {
                 for (int j = 0; j < count; j++) {
                     fullPath.append(command);
                 }
-            } else {
+                }
+                else if (ch == 'F' || ch == 'L' || ch == 'R') {
                 fullPath.append(ch);
-            }
+                } 
+                else {
+            throw new IllegalArgumentException("Invalid character in path: " + ch);
+                }
         }
         canonicalPath = fullPath.toString();
         logger.debug("Canonical path: {}", canonicalPath);

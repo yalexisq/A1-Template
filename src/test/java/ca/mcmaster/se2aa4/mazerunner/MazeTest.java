@@ -1,3 +1,4 @@
+//Alexis Quilatan, 400507554, 2AA4
 //This test ensures the Maze class correctly loads a maze from a file, 
 //checks if cells are open, and handles entry and exit points. 
 //It also tests edge cases like empty files and invalid entry sides. 
@@ -5,6 +6,7 @@
 //ensures proper cleanup after each test.
 package ca.mcmaster.se2aa4.mazerunner;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,13 +16,19 @@ import java.nio.file.Path;
 
 public class MazeTest {
 
+    @BeforeEach
+    void resetMazeInstance() {
+        //Reset the Singleton instance before each test
+        Maze.resetInstance();
+    }
+
     @Test
     public void testIsOpen() throws IOException {
-        // Create a temporary maze file
+        //Create a temporary maze file
         Path tempFile = Files.createTempFile("maze", ".txt");
         Files.writeString(tempFile, "#####\n#   #\n#####");
 
-        Maze maze = new Maze(tempFile.toString());
+        Maze maze = Maze.getInstance(tempFile.toString());
         assertTrue(maze.isOpen(1, 1)); //Valid open cell
         assertFalse(maze.isOpen(0, 0)); //Wall
         assertFalse(maze.isOpen(-1, 0)); //Out of bounds (negative row)
@@ -35,7 +43,7 @@ public class MazeTest {
         Path tempFile = Files.createTempFile("maze", ".txt");
         Files.writeString(tempFile, "     \n#####\n     ");
 
-        Maze maze = new Maze(tempFile.toString());
+        Maze maze = Maze.getInstance(tempFile.toString());
         maze.setEntrySide('E'); //Entry on the left, exit on the right
         assertArrayEquals(new int[]{0, 0}, maze.getEntry());
         assertArrayEquals(new int[]{2, 4}, maze.getExit());
@@ -53,7 +61,7 @@ public class MazeTest {
         Path tempFile = Files.createTempFile("maze", ".txt");
         Files.writeString(tempFile, "     \n#####\n     ");
 
-        Maze maze = new Maze(tempFile.toString());
+        Maze maze = Maze.getInstance(tempFile.toString());
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             maze.setEntrySide('X'); //Invalid side
         });
@@ -68,7 +76,7 @@ public class MazeTest {
         Path tempFile = Files.createTempFile("maze", ".txt");
         Files.writeString(tempFile, "#####\n#   #\n#####");
 
-        Maze maze = new Maze(tempFile.toString());
+        Maze maze = Maze.getInstance(tempFile.toString());
         assertEquals(3, maze.getRows()); //Check number of rows
         assertEquals(5, maze.getCols()); //Check number of columns
 
@@ -81,7 +89,7 @@ public class MazeTest {
         Path tempFile = Files.createTempFile("maze", ".txt");
         Files.writeString(tempFile, "#####\n#   #\n#####");
 
-        Maze maze = new Maze(tempFile.toString());
+        Maze maze = Maze.getInstance(tempFile.toString());
         assertFalse(maze.isOpen(-1, -1)); //Negative indices
         assertFalse(maze.isOpen(3, 0)); //Row out of bounds
         assertFalse(maze.isOpen(0, 5)); //Column out of bounds
@@ -97,7 +105,7 @@ public class MazeTest {
         Files.writeString(tempFile, "");
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            new Maze(tempFile.toString());
+            Maze.getInstance(tempFile.toString());
         });
         assertEquals("Failed to load maze file from " + tempFile.toString(), exception.getMessage());
 
@@ -110,7 +118,7 @@ public class MazeTest {
         Path tempFile = Files.createTempFile("maze", ".txt");
         Files.writeString(tempFile, "###\n#\n###");
 
-        Maze maze = new Maze(tempFile.toString());
+        Maze maze = Maze.getInstance(tempFile.toString());
         assertEquals(3, maze.getRows()); //Check number of rows
         assertEquals(3, maze.getCols()); //Check number of columns (padded to match longest row)
 

@@ -1,3 +1,6 @@
+//Alexis Quilatan, 400507554, 2AA4
+//This test ensures that the Direction class correctly handles turning left and right,
+//converting characters to directions, and retrieving delta values for each direction.
 package ca.mcmaster.se2aa4.mazerunner;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,3 +1,4 @@
+//Alexis Quilatan, 400507554, 2AA4
 //This test ensures that the PathManager class correctly converts between factorized
 //and canonical path formats. It checks both valid and invalid inputs for the conversion methods. 
 package ca.mcmaster.se2aa4.mazerunner;

@@ -6,41 +6,46 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class Maze {
-    private static final Logger logger = LogManager.getLogger(Maze.class);
+    private static Maze instance; //Singleton instance
     private char[][] grid;
     private int[] entry = new int[2];
     private int rows, cols;
     private int[] exit = new int[2];
 
-    public Maze(String filePath) {
+    //Private constructor to prevent direct instantiation
+    private Maze(String filePath) {
         grid = loadMazeFromFile(filePath);
         if (grid == null) {
             throw new IllegalArgumentException("Failed to load maze file from " + filePath);
         }
     }
-    
+
+    //Static method to get the singleton instance
+    public static Maze getInstance(String filePath) {
+        if (instance == null) {
+            instance = new Maze(filePath);
+        }
+        return instance;
+    }
+
+    //Public reset method for testing purposes
+    public static void resetInstance() {
+        instance = null;
+    }
+
     private char[][] loadMazeFromFile(String filePath) {
         ArrayList<String> lines = new ArrayList<>();
-        
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) 
-        {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 lines.add(line);
             }
-        } 
-        
-        catch (IOException ioe) {
-            // logger.error("Error reading maze file");
+        } catch (IOException ioe) {
             return null;
         }
 
         if (lines.isEmpty()) {
-            // logger.error("Maze file is empty");
             return null;
         }
 
@@ -52,30 +57,26 @@ public class Maze {
             if (rowLine.length() < cols) {
                 rowLine = padLine(rowLine);
             }
-
             tempGrid[i] = rowLine.toCharArray();
         }
-
-        // logger.info("Maze loaded");
         return tempGrid;
     }
-    
+
     private String padLine(String line) {
         StringBuilder sb = new StringBuilder(line);
         while (sb.length() < cols) {
             sb.append(" ");
         }
-
         return sb.toString();
     }
-    
+
     public void setEntrySide(char side) {
         int[] left = null;
         int[] right = null;
-    
+
         //Scan through rows to find openings on maze edges
         for (int i = 0; i < rows; i++) {
-            if (grid[i][0] == ' ' && left == null) { //First open space on the left edge
+            if (grid[i][0] == ' ' && left == null) {  //First open space on the left edge
                 left = new int[]{i, 0};
             }
             if (grid[i][cols - 1] == ' ') { //Last open space on the right edge
@@ -93,26 +94,26 @@ public class Maze {
             throw new IllegalArgumentException("Unknown entry side on " + side);
         }
     }
-    
+
     public int[] getEntry() {
         return entry;
     }
-    
+
     public int[] getExit() {
         return exit;
     }
-    
+
     public boolean isOpen(int r, int c) {
         if (r < 0 || r >= rows || c < 0 || c >= cols) {
             return false;
         }
         return grid[r][c] == ' ';
     }
-    
+
     public int getRows() {
         return rows;
     }
-    
+
     public int getCols() {
         return cols;
     }

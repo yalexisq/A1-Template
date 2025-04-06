@@ -12,7 +12,7 @@ public class RightHandSolver implements MazeSolver {
         StringBuilder moves = new StringBuilder();
         int[] exitPos = maze.getExit();
 
-        // Continue until the player’s position is at the exit
+        //Continue until the player’s position is at the exit
         while (!atExit(player.getCurrentPosition(), exitPos)) {
             
             Direction rightDir = player.getFacing().turnRight();
@@ -20,35 +20,35 @@ public class RightHandSolver implements MazeSolver {
             int testCol = player.getCurrentPosition()[1] + rightDir.getDeltaCol();
             
             if (maze.isOpen(testRow, testCol)) {
-                // Turn right then move forward
+                //Turn right then move forward
                 player.executeMove('R', maze);
                 moves.append('R');
                 player.executeMove('F', maze);
                 moves.append('F');
-                // logger.debug("Turned right and moved forward now at [{}, {}]", 
-                        // player.getCurrentPosition()[0], player.getCurrentPosition()[1]);
+                //logger.debug("Turned right and moved forward now at [{}, {}]", 
+                        //player.getCurrentPosition()[0], player.getCurrentPosition()[1]);
             } 
             
             else {
-                // Moves forward if possible
+                //Moves forward if possible
                 int frontRow = player.getCurrentPosition()[0] + player.getFacing().getDeltaRow();
                 int frontCol = player.getCurrentPosition()[1] + player.getFacing().getDeltaCol();
                 if (maze.isOpen(frontRow, frontCol)) {
                     player.executeMove('F', maze);
                     moves.append('F');
-                    // logger.debug("Moved forward to [{}, {}]", 
-                            // player.getCurrentPosition()[0], player.getCurrentPosition()[1]);
+                    //logger.debug("Moved forward to [{}, {}]", 
+                            //player.getCurrentPosition()[0], player.getCurrentPosition()[1]);
                 } 
                 
                 else {
-                    // Otherwise, turn left
+                    //Otherwise, turn left
                     player.executeMove('L', maze);
                     moves.append('L');
-                    // logger.debug("Turned left; now facing {}", player.getFacing());
+                    //logger.debug("Turned left; now facing {}", player.getFacing());
                 }
             }
         }
-        // logger.info("Maze exit reached at [{}, {}]", player.getCurrentPosition()[0], player.getCurrentPosition()[1]);
+        //logger.info("Maze exit reached at [{}, {}]", player.getCurrentPosition()[0], player.getCurrentPosition()[1]);
         return moves.toString();
     }
     

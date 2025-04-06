@@ -8,7 +8,7 @@ public class PathManager {
     private static final Logger logger = LogManager.getLogger(PathManager.class);
     private String canonicalPath = "";
     
-    // Converts move sequence that may be factorized into its full form
+    //Converts move sequence that may be factorized into its full form
     public String toCanonical(String inputPath) {
         StringBuilder fullPath = new StringBuilder();
         for (int i = 0; i < inputPath.length(); i++) {
@@ -59,7 +59,7 @@ public class PathManager {
             }
         }
         String result = factorized.toString();
-        // logger.debug("Factorized path: {}", result);
+        //logger.debug("Factorized path: {}", result);
         return result;
     }
     
